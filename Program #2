@@ -1,0 +1,127 @@
+#Program 2: Create a program which you will enter the amount of money you have, it will also ask for the price of an apple.
+#Display the maximum number of apples that you can buy and the remaining money that you will have. Display the output
+
+import tkinter as tk
+from tkinter import ttk, messagebox
+from PIL import Image, ImageTk
+import datetime
+import pygame
+
+def play_music(file_path):
+    try:
+        pygame.init()
+
+        pygame.mixer.music.set_volume(0.5)  #adjust volume
+
+        pygame.mixer.music.load(file_path)
+        pygame.mixer.music.play(-1) 
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+def stop_music():
+    pygame.mixer.music.stop()
+
+def on_close():
+    stop_music()
+    root.destroy()
+
+def calculate_apples():
+    try:
+        money = float(custom_entry.get())
+        apple_price = float(apple_price_entry.get())
+
+        maximum_number_of_apples = int(money / apple_price)
+
+        number_of_apples = int(num_apples_entry.get())
+
+        total_cost = number_of_apples * apple_price
+        remaining_money = money - total_cost
+
+        display_receipt(number_of_apples, total_cost, remaining_money, maximum_number_of_apples)
+
+    except ValueError:
+        messagebox.showerror("Error", "Please enter valid numeric values.")
+
+def display_receipt(number_of_apples, total_cost, remaining_money, maximum_number_of_apples):
+    receipt_window = tk.Toplevel(root)
+    receipt_window.title("Receipt")
+
+    receipt_window.resizable(False, False)
+
+    for i in range(9):
+        receipt_window.columnconfigure(i, weight=1)
+        receipt_window.rowconfigure(i, weight=1)
+
+    receipt_label = ttk.Label(receipt_window, text="RECEIPT", font=("Arial Black", 18), foreground="black")
+    receipt_label.grid(row=0, column=0, columnspan=7, padx=10, pady=10)
+
+    date_label = ttk.Label(receipt_window, text="Date: " + str(datetime.date.today()), font=("Times New Roman", 12))
+    date_label.grid(row=1, column=0, columnspan=7, padx=10, pady=5)
+
+    transaction_id_label = ttk.Label(receipt_window, text="Transaction ID: " + str(hash(datetime.datetime.now())), font=("Times New Roman", 12))
+    transaction_id_label.grid(row=2, column=0, columnspan=7, padx=10, pady=5)
+
+    separator = ttk.Separator(receipt_window, orient="horizontal")
+    separator.grid(row=3, column=0, columnspan=7, sticky="ew", pady=10)
+
+    receipt_str = f"Number of Apples: {number_of_apples}\nTotal Cost: ₱{total_cost:.2f}\nRemaining Money: ₱{remaining_money:.2f}\nMaximum Number Apples that you can buy: {maximum_number_of_apples}"
+    receipt_text = ttk.Label(receipt_window, text=receipt_str, font=("Times New Roman", 16))
+    receipt_text.grid(row=4, column=0, columnspan=7, padx=10, pady=10)
+
+    thank_you_label = ttk.Label(receipt_window, text="Thank you for your purchase!", font=("Arial Black", 11), foreground="green")
+    thank_you_label.grid(row=5, column=0, columnspan=7, padx=10, pady=10)
+
+    ok_button = ttk.Button(receipt_window, text="OK", command=receipt_window.destroy)
+    ok_button.grid(row=6, column=0, columnspan=7, pady=10)
+
+root = tk.Tk()
+root.title("Apple Haven Cashier")
+
+for i in range(5):
+    root.columnconfigure(i, weight=1)
+    root.rowconfigure(i, weight=1)
+
+apple_image_path = "c:\\Users\\yashy\\OneDrive\\Desktop\\1st Year College\\1st Sem  - First Year\\Activities\\Programs_PLD\\Assignment #3\\files\\apple basket.png"  
+
+apple_image = Image.open(apple_image_path)
+apple_image = apple_image.resize((300, 300))  #resize image
+apple_image = ImageTk.PhotoImage(apple_image)
+
+welcome_label = ttk.Label(root, text="Welcome to the Apple Haven!", font=("Lucida Calligraphy", 24), foreground="blue")
+welcome_label.grid(row=0, column=0, columnspan=5, padx=10, pady=10)
+
+apple_image_label = ttk.Label(root, image=apple_image)
+apple_image_label.grid(row=1, column=0, columnspan=5, padx=10, pady=10)
+
+custom_label = ttk.Label(root, text="Enter the amount of money received:", font=("Times New Roman", 16), foreground="green")
+custom_label.grid(row=2, column=0, columnspan=2, padx=10, pady=10, sticky="e")
+
+custom_entry = ttk.Entry(root, font=("Times New Roman", 16))
+custom_entry.grid(row=2, column=2, columnspan=2, padx=10, pady=10, sticky="w")
+
+apple_price_label = ttk.Label(root, text="How much is the apple?:", font=("Times New Roman", 16), foreground="green")
+apple_price_label.grid(row=3, column=0, columnspan=2, padx=10, pady=10, sticky="e")
+
+apple_price_entry = ttk.Entry(root, font=("Times New Roman", 16))
+apple_price_entry.grid(row=3, column=2, columnspan=2, padx=10, pady=10, sticky="w")
+
+num_apples_label = ttk.Label(root, text="Enter the number of apples you want to buy:", font=("Times New Roman", 16), foreground="green")
+num_apples_label.grid(row=4, column=0, columnspan=2, padx=10, pady=10, sticky="e")
+
+num_apples_entry = ttk.Entry(root, font=("Times New Roman", 16))
+num_apples_entry.grid(row=4, column=2, columnspan=2, padx=10, pady=10, sticky="w")
+
+style = ttk.Style()
+style.configure("Custom.TButton", font=("Times New Roman", 18), foreground="red")
+
+calculate_button = ttk.Button(root, text="Pay Now", command=calculate_apples, style="Custom.TButton")
+calculate_button.grid(row=5, column=0, columnspan=5, pady=10)
+
+music_file_path = "c:\\Users\\yashy\\OneDrive\\Desktop\\1st Year College\\1st Sem  - First Year\\Activities\\Programs_PLD\\Assignment #3\\files\\supermarket music.mp3"
+
+play_music(music_file_path)
+
+root.protocol("WM_DELETE_WINDOW", on_close)
+
+root.mainloop()
